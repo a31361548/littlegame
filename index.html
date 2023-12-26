@@ -38,8 +38,9 @@
       border: 1px solid black;
     }
 
-    .rich img {
+    .gold {
       height: 100%;
+      display: none;
     }
 
     #game {
@@ -93,15 +94,6 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js'></script>
   <!-- 設定 GSAP　主程式 -->
   <script src="./gsap/gsap.js"></script>
-  <script>
-    const money = gsap.to('.gold', {
-      x: 1100,
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      delay: 0.5
-    })
-  </script>
 
   <!-- 遊戲區 -->
   <script>
@@ -126,6 +118,18 @@
     }
     //  點擊開始
     $('#btn-start').click(function () {
+      $('.gold').css('display', 'block')
+      const richEle = document.querySelector('.rich');
+      const goldEle = document.querySelector('.gold');
+      const richW = richEle.offsetWidth;
+      const goldW = goldEle.offsetWidth;
+      const money = gsap.to('.gold', {
+        x: `+=${richW - goldW}`,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        delay: 0.5,
+      })
       // 停用按鈕
       $(this).attr('disabled', true)
       // 重設
@@ -133,35 +137,38 @@
       $('#text-score').text(score)
       time = 30
       $('#text-time').text(time)
-      // 因為 setInterval 裡面的 this 會指向 window，而不是點到的按鈕，所以先把 this 存起來
       const _this = this
       // 開始遊戲
       timer = setInterval(function () {
-        // 倒數
         time--
         $('#text-time').text(time)
-        // 隨機 1~10
         const random = Math.ceil(Math.random() * 10)
-        // 如果隨機數字大於 5 且魚的數量小於 5
-        if (random > 2 && $('.fish').length < 10) {
-          // 隨機位置
+        if (random > 2 && $('.cat').length < 8) {
           const rand = (min, max) => {
             return Math.round(Math.random() * (max - min)) + min
           }
-          const left = rand(80, 20) + '%'
-          // 產生魚
-          const fish = $(`<img src="./images/taffy-taffy-coin.gif" class="fish" style="top:-10px; left:${left}">`)
-          $('#game').append(fish)
-          moveFish(fish)
+          const left = rand(90, 15) + '%'
+          // 貓咪硬幣
+          const cat = $(`<img src="./images/taffy-taffy-coin.gif" class="cat" style="top:-10px; left:${left}">`)
+          $('#game').append(cat)
+          moveCat(cat)
         }
         // 如果時間到了
-        if (time === 0) {
+        if (time <= 20 && time > 0) {
+          $('.gold').attr('src', `./images/コイン-お金.gif`)
+          if (time % 3.5 === 0) {
+            $('.cat').each(function () {
+              $(this).attr('src', './images/coin-mario.gif');
+              $(this).removeClass('cat').addClass('coin');
+            })
+          }
+        } else if (time === 0) {
           clearInterval(timer)
           // 重新啟用按鈕
           $(_this).attr('disabled', false)
           // 清空遊戲區域
           // .empty() 會把裡面的子元素都刪除
-          $('#game').empty()
+          $('#playarea').empty()
 
 
           if (score > hs.score) {
@@ -207,24 +214,30 @@
     })
 
     // 點擊
-    $('#game').on('click', '.fish', function () {
+    $('#game').on('click', '.cat,.coin', function () {
       $(this).stop()
-      $(this).attr('src', './images/wowguy-eddy-wally.gif')
-      $(this).removeClass('fish').addClass('blood')
-      score++
-      $('#text-score').text(score)
+      if ($(this).hasClass('cat')) {
+        $(this).attr('src', './images/wowguy-eddy-wally.gif')
+        $(this).removeClass('cat').addClass('wink')
+        score++
+      } else if ($(this).hasClass('coin')) {
+        $(this).attr('src', './images/wowguy-eddy-wally.gif')
+        $(this).removeClass('coin').addClass('wink')
+        score += 5
+      }
       setTimeout(() => {
-        $('.blood').fadeTo(2000, 0)
+        $('.wink').fadeTo(2000, 0)
       }, 2000);
       clearTimeout()
+      $('#text-score').text(score)
     })
 
-    function moveFish(fish) {
+    function moveCat(cat) {
       // 隨機位置
       const left = Math.round(Math.random() * 100) + '%'
       const top = 1000
-      fish.animate({ top, left }, 3000, function () {
-        moveFish(fish)
+      cat.animate({ top, left }, 3000, function () {
+        moveCat(cat)
       })
     }
   </script>
