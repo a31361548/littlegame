@@ -81,9 +81,13 @@
     }
 
 
-    .blood {
+    .wink {
       /* 忽略點擊事件，可以點擊穿透 */
       pointer-events: none;
+    }
+
+    .container2 {
+      display: none;
     }
   </style>
 </head>
@@ -92,8 +96,8 @@
   <div class="container">
     <input type="button" value="開始" id="btn-start">
     <br>
-    <p>分數 <span id="text-score">0</span></p>
-    <p>剩餘時間 <span id="text-time">0</span></p>
+    <p class="container2">分數 <span id="text-score">0</span></p>
+    <p class="container2">剩餘時間 <span id="text-time">0</span></p>
     <p>最高分玩家: <span id="text-hsname">-</span></p>
     <p>最高分數: <span id="text-hsscore">0</span></p>
   </div>
@@ -131,15 +135,13 @@
     $('#btn-start').click(function () {
       $('.gold').css('display', 'block')
       $('.playarea').css('display', 'block')
-      const richEle = document.querySelector('.rich');
-      const goldEle = document.querySelector('.gold');
-      const richW = richEle.offsetWidth;
-      const goldW = goldEle.offsetWidth;
+      $('.container2').css('display', 'block')
       const money = gsap.to('.gold', {
-        x: `+=${richW - goldW}`,
+        x: $('.rich').width() - $('.gold').width(),
         duration: 3,
         repeat: -1,
         yoyo: true,
+        ease: 'none',
         delay: 0.5,
       })
       // 停用按鈕
@@ -147,7 +149,7 @@
       // 重設
       score = 0
       $('#text-score').text(score)
-      time = 30
+      time = 5
       $('#text-time').text(time)
       const _this = this
       // 開始遊戲
@@ -180,9 +182,13 @@
           $(_this).attr('disabled', false)
           // 清空遊戲區域
           // .empty() 會把裡面的子元素都刪除
-          $('#game').empty()
           $('.gold').css('display', 'none')
           $('.playarea').css('display', 'none')
+          $('.container2').css('display', 'none')
+          $('#game .cat').remove()
+          $('#game .wink').remove()
+          money.pause()
+          // $('.rich').empty()
 
 
           if (score > mr.score) {
@@ -214,14 +220,18 @@
               // JSON.stringify 將陣列或物件轉文字
               // JSON.parse 將文字陣列變可用陣列
               localStorage.mr = JSON.stringify(mr)
+              location.reload()
             })
           } else {
             Swal.fire({
+              heightAuto: false,
               icon: 'info',
               title: '時間到',
               text: `你得到${score}分`,
               allowOutsideClick: false,
-              allowEscapeKey: false
+              allowEscapeKey: false,
+            }).then(function () {
+              location.reload()
             })
           }
         }
