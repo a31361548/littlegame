@@ -89,17 +89,29 @@
     .container2 {
       display: none;
     }
+
+    .book {
+      height: 50px;
+      width: 100%;
+      display: flex;
+    }
+
+    .book span {
+      align-self: center;
+    }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <input type="button" value="開始" id="btn-start">
+    <input type="button" value="開始" id="btn-start"
+      style="width: 200px; height: 50px; background-image: url(./images/paw.png);background-size: contain;background-repeat: no-repeat;">
     <br>
-    <p class="container2">分數 <span id="text-score">0</span></p>
+    <div class="book"><img src="./images/coin-mario.gif" style=" height: 100%;"><span>&nbsp; &nbsp;X5</span></div>
+    <p class="container2">$$ <span id="text-score">0</span></p>
     <p class="container2">剩餘時間 <span id="text-time">0</span></p>
     <p>最高分玩家: <span id="text-hsname">-</span></p>
-    <p>最高分數: <span id="text-hsscore">0</span></p>
+    <p>最高金額: <span id="text-hsscore">0</span></p>
   </div>
   <!-- 兔子移動 -->
   <div class="playarea">
@@ -136,6 +148,7 @@
       $('.gold').css('display', 'block')
       $('.playarea').css('display', 'block')
       $('.container2').css('display', 'block')
+      $('#btn-start').css('display', 'none')
       const money = gsap.to('.gold', {
         x: $('.rich').width() - $('.gold').width(),
         duration: 3,
@@ -149,7 +162,7 @@
       // 重設
       score = 0
       $('#text-score').text(score)
-      time = 5
+      time = 30
       $('#text-time').text(time)
       const _this = this
       // 開始遊戲
@@ -230,6 +243,7 @@
               text: `你得到${score}分`,
               allowOutsideClick: false,
               allowEscapeKey: false,
+              confirmButtonText: '加油，好嗎?'
             }).then(function () {
               location.reload()
             })
