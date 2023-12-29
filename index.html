@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.css'
+    integrity='sha512-phGxLIsvHFArdI7IyLjv14dchvbVkEDaH95efvAae/y2exeWBQCQDpNFbOTdV1p4/pIa/XtbuDCnfhDEIXhvGQ=='
+    crossorigin='anonymous' />
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'
     integrity='sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=='
     crossorigin='anonymous'></script>
@@ -107,11 +110,11 @@
     <input type="button" value="開始" id="btn-start"
       style="width: 200px; height: 50px; background-image: url(./images/paw.png);background-size: contain;background-repeat: no-repeat;">
     <br>
-    <div class="book"><img src="./images/coin-mario.gif" style=" height: 100%;"><span>&nbsp; &nbsp;X5</span></div>
-    <p class="container2">$$ <span id="text-score">0</span></p>
+    <div class="book"><img src="./images/coin-mario.gif" style=" height: 100%;"><span>&nbsp; &nbsp;+5億元</span></div>
+    <p class="container2"><span id="text-score">0</span></p>
     <p class="container2">剩餘時間 <span id="text-time">0</span></p>
-    <p>最高分玩家: <span id="text-hsname">-</span></p>
-    <p>最高金額: <span id="text-hsscore">0</span></p>
+    <p>地方首富: <span id="text-mrname">-</span></p>
+    <p>最高金額: <span id="text-mrscore">0</span></p>
   </div>
   <!-- 兔子移動 -->
   <div class="playarea">
@@ -140,8 +143,8 @@
       const data = JSON.parse(localStorage.mr)
       mr.name = data.name
       mr.score = data.score
-      $('#text-hsname').text(mr.name)
-      $('#text-hsscore').text(mr.score)
+      $('#text-mrname').text(mr.name)
+      $('#text-mrscore').text(mr.score + '億元')
     }
     //  點擊開始
     $('#btn-start').click(function () {
@@ -149,6 +152,7 @@
       $('.playarea').css('display', 'block')
       $('.container2').css('display', 'block')
       $('#btn-start').css('display', 'none')
+      $('.book').css('display', 'none')
       const money = gsap.to('.gold', {
         x: $('.rich').width() - $('.gold').width(),
         duration: 3,
@@ -206,9 +210,11 @@
 
           if (score > mr.score) {
             Swal.fire({
-              icon: 'success',
+              imageUrl: './images/cash.gif',
+              imageWidth: '200',
+              imageHeight: 'auto',
               title: '時間到',
-              text: `最高分，你得到${score}分`,
+              text: `總資產${score}億元`,
               // input 的 type
               input: 'text',
               // input 的其他屬性
@@ -221,7 +227,11 @@
               // 不允許點擊外面關閉對話框
               allowOutsideClick: false,
               // 不允許按 Esc 關閉對話框
-              allowEscapeKey: false
+              allowEscapeKey: false,
+              confirmButtonText: '今晚消費，我買單!!!',
+              showClass: {
+                popup: 'animate__animated animate__zoomInRight'
+              }
             }).then(function (result) {
               mr.score = score
               mr.name = result.value
@@ -238,12 +248,17 @@
           } else {
             Swal.fire({
               heightAuto: false,
-              icon: 'info',
+              imageUrl: './images/cash2.gif',
+              imageWidth: '200',
+              imageHeight: 'auto',
               title: '時間到',
-              text: `你得到${score}分`,
+              text: `你得到${score}億元`,
               allowOutsideClick: false,
               allowEscapeKey: false,
-              confirmButtonText: '加油，好嗎?'
+              confirmButtonText: '花不完，根本花不完',
+              showClass: {
+                popup: 'animate__animated animate__zoomInRight'
+              }
             }).then(function () {
               location.reload()
             })
@@ -269,7 +284,7 @@
         $('.wink').fadeTo(2000, 0)
       }, 2000);
       clearTimeout()
-      $('#text-score').text(score)
+      $('#text-score').text(score + '億元')
     })
 
     function moveCat(cat) {
